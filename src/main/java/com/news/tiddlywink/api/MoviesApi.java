@@ -41,12 +41,29 @@ public class MoviesApi {
 	@GET
 	@Path("/trending/{city}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPropertiesByDomain(@Context HttpServletRequest requestContext, @PathParam("city") String city,
+	public Response getTrendingMovies(@Context HttpServletRequest requestContext, @PathParam("city") String city,
 			@QueryParam("ninja") String ninja) {
 		SearchRequestBuilder search = null;
 		SearchResponse response = null;
 		BoolQueryBuilder catBoolQuery = QueryBuilders.boolQuery();
 		search = TiddlywinkServletContext.transportClient.prepareSearch("trending");
+		catBoolQuery.should(QueryBuilders.matchQuery("city", city));
+		search.setQuery(catBoolQuery);
+		response = search.execute().actionGet();
+		JSONArray movies = GetResponseUtil.getProductResponse(response);
+		System.out.println(movies);
+		return Response.status(200).entity(movies).build();
+	}
+	
+	@GET
+	@Path("/upcomming/{city}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUpcommingMovies(@Context HttpServletRequest requestContext, @PathParam("city") String city,
+			@QueryParam("ninja") String ninja) {
+		SearchRequestBuilder search = null;
+		SearchResponse response = null;
+		BoolQueryBuilder catBoolQuery = QueryBuilders.boolQuery();
+		search = TiddlywinkServletContext.transportClient.prepareSearch("upcomming");
 		catBoolQuery.should(QueryBuilders.matchQuery("city", city));
 		search.setQuery(catBoolQuery);
 		response = search.execute().actionGet();
