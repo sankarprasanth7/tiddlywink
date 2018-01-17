@@ -19,6 +19,9 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
+
+import com.news.tiddlywink.utils.TiddlywinkConstants;
 
 /**
  * @author naresh
@@ -38,10 +41,12 @@ public class TestECQueries {
 		
 		
 		
-		Settings settings = Settings.settingsBuilder().put("cluster.name",SHOPAI_CLUSTER_NAME ).build();
+		Settings settings = Settings.builder()
+		        .put("cluster.name", "movie-cluster").put("transport.tcp.port", "9300").build();
 		try {
-			transportClient = TransportClient.builder().settings(settings).build()
-					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(SHOPAI_ELASTIC_MASTER_HOST_NAME), SHOPAI_ELASTIC_PORT));
+			transportClient = new PreBuiltTransportClient(settings)
+			        .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(TiddlywinkConstants.SHOPAI_ELASTIC_MASTER_HOST_NAME), TiddlywinkConstants.SHOPAI_ELASTIC_PORT));
+
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

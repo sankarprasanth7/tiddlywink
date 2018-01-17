@@ -12,15 +12,13 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.shield.ShieldPlugin;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 //import com.news.tiddlywink.connectors.RedisConnector;
 //import com.news.tiddlywink.helper.ConfigHelper;
 import com.news.tiddlywink.utils.TiddlywinkConstants;
-
-import redis.clients.jedis.Jedis;
 
 /**
  * @author naresh
@@ -39,12 +37,13 @@ public class TiddlywinkServletContext implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 
-		Settings settings = Settings.settingsBuilder()
-				.put("cluster.name", "movie-cluster")
-				.put("transport.tcp.port", "9300").build();
+
+		Settings settings = Settings.builder()
+		        .put("cluster.name", "movie-cluster").put("transport.tcp.port", "9300").build();
 		try {
-			transportClient = TransportClient.builder().settings(settings).build()
-					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(TiddlywinkConstants.SHOPAI_ELASTIC_MASTER_HOST_NAME), TiddlywinkConstants.SHOPAI_ELASTIC_PORT));
+			transportClient = new PreBuiltTransportClient(settings)
+			        .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(TiddlywinkConstants.SHOPAI_ELASTIC_MASTER_HOST_NAME), TiddlywinkConstants.SHOPAI_ELASTIC_PORT));
+
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
