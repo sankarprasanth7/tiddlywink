@@ -26,7 +26,7 @@ public class TiddlywinkConstants {
 	public static JSONObject SHOPAI_PROVIDER_MAPPING = null;
 	public static JSONObject SHOPAI_AMAZON_MAPPING = null;
 	public static JSONObject SHOPAI_CATEGORIES_PRIORITY = new JSONObject();
-	public static final String SHOPAI_ELASTIC_MASTER_HOST_NAME = "35.196.156.95";
+	public static final String SHOPAI_ELASTIC_MASTER_HOST_NAME = "35.196.31.116";
 	public static final Integer SHOPAI_ELASTIC_PORT = 9300;
 	public static JSONObject PROPERTIES = new JSONObject();
 	public static  Map<String, Set<String>> PropertiesArray = new HashMap<String,Set<String>>();
