@@ -25,6 +25,7 @@ import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,23 @@ public class MoviesApi {
 	private static final Logger logger = LoggerFactory.getLogger(MoviesApi.class);
 
 	@GET
+	@Path("/nowshowing/{city}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getNowShowingMovies(@Context HttpServletRequest requestContext, @PathParam("city") String city,
+			@QueryParam("ninja") String ninja) {
+		SearchRequestBuilder search = null;
+		SearchResponse response = null;
+		BoolQueryBuilder catBoolQuery = QueryBuilders.boolQuery();
+		search = TiddlywinkServletContext.transportClient.prepareSearch("trending");
+		catBoolQuery.should(QueryBuilders.matchQuery("city", city));
+		search.setQuery(catBoolQuery);
+		response = search.execute().actionGet();
+		JSONArray movies = GetResponseUtil.getProductResponse(response);
+		System.out.println(movies);
+		return Response.status(200).entity(movies).build();
+	}
+	
+	@GET
 	@Path("/trending/{city}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTrendingMovies(@Context HttpServletRequest requestContext, @PathParam("city") String city,
@@ -49,7 +67,8 @@ public class MoviesApi {
 		search = TiddlywinkServletContext.transportClient.prepareSearch("trending");
 		catBoolQuery.should(QueryBuilders.matchQuery("city", city));
 		search.setQuery(catBoolQuery);
-		response = search.execute().actionGet();
+		search.addSort("percentage", SortOrder.DESC);
+		response = search.setSize(5).execute().actionGet();
 		JSONArray movies = GetResponseUtil.getProductResponse(response);
 		System.out.println(movies);
 		return Response.status(200).entity(movies).build();
